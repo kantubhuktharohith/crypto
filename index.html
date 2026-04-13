@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptoverse - Realtime Tracker</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        },
+                        dark: {
+                            bg: '#0f172a',
+                            card: '#1e293b',
+                            text: '#f8fafc',
+                            muted: '#94a3b8'
+                        },
+                        up: '#10b981',
+                        down: '#ef4444'
+                    }
+                }
+            }
+        }
+    </script>
+
+    
+</head>
+<body class="bg-dark-bg text-dark-text font-sans antialiased overflow-hidden selection:bg-brand-500 selection:text-white text-base">
+
+    <!-- Wrapper for Main App -->
+    <div id="app-wrapper" class="w-full h-screen flex flex-col relative transition-all duration-500">
+        
+        <!-- Top Navigation -->
+        <nav class="glass z-30 sticky top-0 w-full shrink-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-20"> <!-- Increased Height -->
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3 cursor-pointer select-none btn-bounce" onclick="app.navTo('home')">
+                        <div class="bg-brand-500 p-2 rounded-xl shadow-lg shadow-brand-500/20">
+                            <i class="ph-fill ph-currency-btc text-white text-2xl"></i>
+                        </div>
+                        <span class="font-bold text-2xl tracking-tight hidden sm:block">Crypto<span class="text-brand-500">verse</span></span>
+                        <span class="font-bold text-2xl tracking-tight sm:hidden">CV</span>
+                    </div>
+
+                    <!-- Desktop Nav Links -->
+                    <div class="hidden md:flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
+                        <button onclick="app.navTo('home')" class="nav-link px-5 py-2.5 rounded-xl text-base font-medium transition-all duration-200 hover:bg-slate-700/50 hover:text-white text-brand-500">Home</button>
+                        <button onclick="app.navTo('market')" class="nav-link px-5 py-2.5 rounded-xl text-base font-medium transition-all duration-200 hover:bg-slate-700/50 hover:text-white text-dark-muted">Market</button>
+                        <button onclick="app.navTo('exchanges')" class="nav-link px-5 py-2.5 rounded-xl text-base font-medium transition-all duration-200 hover:bg-slate-700/50 hover:text-white text-dark-muted">Exchanges</button>
+                        <button onclick="app.navTo('news')" class="nav-link px-5 py-2.5 rounded-xl text-base font-medium transition-all duration-200 hover:bg-slate-700/50 hover:text-white text-dark-muted">News</button>
+                    </div>
+
+                    <!-- Right Actions: Currency Toggle -->
+                    <div class="flex items-center gap-4">
+                        <button onclick="app.toggleCurrency()" class="flex items-center gap-2.5 bg-slate-800 hover:bg-slate-700 text-white pl-1.5 pr-4 py-1.5 rounded-full text-sm font-bold transition-all border border-slate-700 hover:border-brand-500 btn-bounce group shadow-lg">
+                            <div class="bg-brand-500 rounded-full w-7 h-7 flex items-center justify-center text-white shadow-md group-hover:scale-110 transition-transform">
+                                <i id="currency-icon" class="ph-bold ph-currency-dollar text-sm"></i>
+                            </div>
+                            <span id="currency-label" class="tracking-wide">USD</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main id="main-container" class="flex-1 overflow-y-auto relative scroll-smooth pb-24 md:pb-0">
+            <!-- Views injected here -->
+        </main>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="md:hidden glass-top absolute bottom-0 w-full z-30 pb-safe">
+            <div class="flex justify-around items-center h-20 px-2 pb-2">
+                <button onclick="app.navTo('home')" class="mobile-link group flex flex-col items-center gap-1.5 p-2 w-full text-brand-500 transition-colors btn-bounce">
+                    <div class="relative bg-transparent p-1 rounded-xl group-hover:bg-slate-800/50 transition-colors">
+                        <i class="ph-fill ph-house text-2xl mb-0.5 group-active:scale-90 transition-transform"></i>
+                    </div>
+                    <span class="text-xs font-semibold">Home</span>
+                </button>
+                <button onclick="app.navTo('market')" class="mobile-link group flex flex-col items-center gap-1.5 p-2 w-full text-dark-muted transition-colors btn-bounce">
+                    <div class="relative bg-transparent p-1 rounded-xl group-hover:bg-slate-800/50 transition-colors">
+                        <i class="ph-fill ph-chart-bar text-2xl mb-0.5 group-active:scale-90 transition-transform"></i>
+                    </div>
+                    <span class="text-xs font-semibold">Market</span>
+                </button>
+                <button onclick="app.navTo('exchanges')" class="mobile-link group flex flex-col items-center gap-1.5 p-2 w-full text-dark-muted transition-colors btn-bounce">
+                    <div class="relative bg-transparent p-1 rounded-xl group-hover:bg-slate-800/50 transition-colors">
+                        <i class="ph-fill ph-arrows-left-right text-2xl mb-0.5 group-active:scale-90 transition-transform"></i>
+                    </div>
+                    <span class="text-xs font-semibold">Exchanges</span>
+                </button>
+                <button onclick="app.navTo('news')" class="mobile-link group flex flex-col items-center gap-1.5 p-2 w-full text-dark-muted transition-colors btn-bounce">
+                    <div class="relative bg-transparent p-1 rounded-xl group-hover:bg-slate-800/50 transition-colors">
+                        <i class="ph-fill ph-newspaper text-2xl mb-0.5 group-active:scale-90 transition-transform"></i>
+                    </div>
+                    <span class="text-xs font-semibold">News</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loader Overlay -->
+        <div id="loader-overlay" class="absolute inset-0 flex items-center justify-center bg-dark-bg z-50 transition-opacity duration-300">
+            <div class="text-center">
+                <div class="loader w-14 h-14 border-4 mx-auto mb-6"></div>
+                <p class="text-dark-muted text-lg font-medium animate-pulse">Syncing with Blockchain...</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
